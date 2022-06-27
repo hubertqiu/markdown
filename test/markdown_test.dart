@@ -45,6 +45,10 @@ void main() async {
     'extensions/strikethrough.unit',
     inlineSyntaxes: [StrikethroughSyntax()],
   );
+  testFile(
+    'extensions/interactive_span.unit',
+    blockSyntaxes: [const FencedBlockquoteSyntax()],
+  );
 
   await testDirectory('common_mark');
   await testDirectory('gfm', extensionSet: ExtensionSet.gitHubFlavored);
@@ -71,8 +75,7 @@ void main() async {
   });
 
   group('Resolver', () {
-    Node? nyanResolver(String text, [_]) =>
-        text.isEmpty ? null : Text('~=[,,_${text}_,,]:3');
+    Node? nyanResolver(String text, [_]) => text.isEmpty ? null : Text('~=[,,_${text}_,,]:3');
     validateCore(
         'simple link resolver',
         '''

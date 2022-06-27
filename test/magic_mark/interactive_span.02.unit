@@ -1,0 +1,288 @@
+>>> Interative Spans - 535
+{foo}[bar]
+
+[bar]: /url "title"
+<<<
+<p><span href="/url" title="title">foo</span></p>
+>>> Interative Spans - 536
+{link {foo {bar}}}[ref]
+
+[ref]: /uri
+<<<
+<p><span href="/uri">link {foo {bar}}</span></p>
+>>> Interative Spans - 537
+{link \{bar}[ref]
+
+[ref]: /uri
+<<<
+<p><span href="/uri">link {bar</span></p>
+>>> Interative Spans - 538
+{link *foo **bar** `#`*}[ref]
+
+[ref]: /uri
+<<<
+<p><span href="/uri">link <em>foo <strong>bar</strong> <code>#</code></em></span></p>
+>>> Interative Spans - 539
+{![moon](moon.jpg)}[ref]
+
+[ref]: /uri
+<<<
+<p><span href="/uri"><img src="moon.jpg" alt="moon" /></span></p>
+>>> Interative Spans - 540
+{foo {bar}(/uri)}{ref}
+
+[ref]: /uri
+<<<
+<p>{foo <span href="/uri">bar</span>}<span href="/uri">ref</span></p>
+>>> Interative Spans - 541
+{foo *bar {baz}[ref]*][ref]
+
+[ref]: /uri
+<<<
+<p>[foo <em>bar <span href="/uri">baz</span></em>]<span href="/uri">ref</span></p>
+>>> Interative Spans - 542
+*[foo*][ref]
+
+[ref]: /uri
+<<<
+<p>*<span href="/uri">foo*</span></p>
+>>> Interative Spans - 543
+[foo *bar][ref]
+
+[ref]: /uri
+<<<
+<p><span href="/uri">foo *bar</span></p>
+>>> Interative Spans - 544
+[foo <bar attr="][ref]">
+
+[ref]: /uri
+<<<
+<p>[foo <bar attr="][ref]"></p>
+>>> Interative Spans - 545
+[foo`][ref]`
+
+[ref]: /uri
+<<<
+<p>[foo<code>][ref]</code></p>
+>>> Interative Spans - 546
+[foo<http://example.com/?search=][ref]>
+
+[ref]: /uri
+<<<
+<p>[foo<span href="http://example.com/?search=%5D%5Bref%5D">http://example.com/?search=][ref]</span></p>
+>>> Interative Spans - 547
+[foo][BaR]
+
+[bar]: /url "title"
+<<<
+<p><span href="/url" title="title">foo</span></p>
+>>> Interative Spans - 548
+[Толпой][Толпой] is a Russian word.
+
+[ТОЛПОЙ]: /url
+<<<
+<p><span href="/url">Толпой</span> is a Russian word.</p>
+>>> Interative Spans - 549
+[Foo
+  bar]: /url
+
+[Baz][Foo bar]
+<<<
+<p><span href="/url">Baz</span></p>
+>>> Interative Spans - 550
+[foo] [bar]
+
+[bar]: /url "title"
+<<<
+<p>[foo] <span href="/url" title="title">bar</span></p>
+>>> Interative Spans - 551
+[foo]
+[bar]
+
+[bar]: /url "title"
+<<<
+<p>[foo]
+<span href="/url" title="title">bar</span></p>
+>>> Interative Spans - 552
+[foo]: /url1
+
+[foo]: /url2
+
+[bar][foo]
+<<<
+<p><span href="/url1">bar</span></p>
+>>> Interative Spans - 553
+[bar][foo\!]
+
+[foo!]: /url
+<<<
+<p>[bar][foo!]</p>
+>>> Interative Spans - 554
+[foo][ref[]
+
+[ref[]: /uri
+<<<
+<p>[foo][ref[]</p>
+>>> Interative Spans - 555
+[foo][ref[bar]]
+
+[ref[bar]]: /uri
+<<<
+<p>[foo][ref[bar]]</p>
+<p>[ref[bar]]: /uri</p>
+>>> Interative Spans - 556
+[[[foo]]]
+
+[[[foo]]]: /url
+<<<
+<p>[[[foo]]]</p>
+<p>[[[foo]]]: /url</p>
+>>> Interative Spans - 557
+[foo][ref\[]
+
+[ref\[]: /uri
+<<<
+<p><span href="/uri">foo</span></p>
+>>> Interative Spans - 558
+[bar\\]: /uri
+
+[bar\\]
+<<<
+<p><span href="/uri">bar\</span></p>
+>>> Interative Spans - 559
+[]
+
+[]: /uri
+<<<
+<p>[]</p>
+<p>[]: /uri</p>
+>>> Interative Spans - 560
+[
+ ]
+
+[
+ ]: /uri
+<<<
+<p>[
+]</p>
+<p>[
+]: /uri</p>
+>>> Interative Spans - 561
+[foo][]
+
+[foo]: /url "title"
+<<<
+<p><span href="/url" title="title">foo</span></p>
+>>> Interative Spans - 562
+[*foo* bar][]
+
+[*foo* bar]: /url "title"
+<<<
+<p><span href="/url" title="title"><em>foo</em> bar</span></p>
+>>> Interative Spans - 563
+[Foo][]
+
+[foo]: /url "title"
+<<<
+<p><span href="/url" title="title">Foo</span></p>
+>>> Interative Spans - 564
+[foo] 
+[]
+
+[foo]: /url "title"
+<<<
+<p><span href="/url" title="title">foo</span> 
+[]</p>
+>>> Interative Spans - 565
+[foo]
+
+[foo]: /url "title"
+<<<
+<p><span href="/url" title="title">foo</span></p>
+>>> Interative Spans - 566
+[*foo* bar]
+
+[*foo* bar]: /url "title"
+<<<
+<p><span href="/url" title="title"><em>foo</em> bar</span></p>
+>>> Interative Spans - 567
+[[*foo* bar]]
+
+[*foo* bar]: /url "title"
+<<<
+<p>[<span href="/url" title="title"><em>foo</em> bar</span>]</p>
+>>> Interative Spans - 568
+[[bar [foo]
+
+[foo]: /url
+<<<
+<p>[[bar <span href="/url">foo</span></p>
+>>> Interative Spans - 569
+[Foo]
+
+[foo]: /url "title"
+<<<
+<p><span href="/url" title="title">Foo</span></p>
+>>> Interative Spans - 570
+[foo] bar
+
+[foo]: /url
+<<<
+<p><span href="/url">foo</span> bar</p>
+>>> Interative Spans - 571
+\[foo]
+
+[foo]: /url "title"
+<<<
+<p>[foo]</p>
+>>> Interative Spans - 572
+[foo*]: /url
+
+*[foo*]
+<<<
+<p>*<span href="/url">foo*</span></p>
+>>> Interative Spans - 573
+[foo][bar]
+
+[foo]: /url1
+[bar]: /url2
+<<<
+<p><span href="/url2">foo</span></p>
+>>> Interative Spans - 574
+[foo][]
+
+[foo]: /url1
+<<<
+<p><span href="/url1">foo</span></p>
+>>> Interative Spans - 575
+[foo]()
+
+[foo]: /url1
+<<<
+<p><span href="">foo</span></p>
+>>> Interative Spans - 576
+[foo](not a link)
+
+[foo]: /url1
+<<<
+<p><span href="/url1">foo</span>(not a link)</p>
+>>> Interative Spans - 577
+[foo][bar][baz]
+
+[baz]: /url
+<<<
+<p>[foo]<span href="/url">bar</span></p>
+>>> Interative Spans - 578
+[foo][bar][baz]
+
+[baz]: /url1
+[bar]: /url2
+<<<
+<p><span href="/url2">foo</span><span href="/url1">baz</span></p>
+>>> Interative Spans - 579
+[foo][bar][baz]
+
+[baz]: /url1
+[foo]: /url2
+<<<
+<p>[foo]<span href="/url1">bar</span></p>

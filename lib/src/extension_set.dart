@@ -11,6 +11,7 @@ import 'inline_syntaxes/color_swatch_syntax.dart';
 import 'inline_syntaxes/emoji_syntax.dart';
 import 'inline_syntaxes/inline_html_syntax.dart';
 import 'inline_syntaxes/inline_syntax.dart';
+import 'inline_syntaxes/interactive_span_syntax.dart';
 import 'inline_syntaxes/strikethrough_syntax.dart';
 
 /// ExtensionSets provide a simple grouping mechanism for common Markdown
@@ -87,10 +88,31 @@ class ExtensionSet {
       ],
     ),
     List<InlineSyntax>.unmodifiable(
+      <InlineSyntax>[InlineHtmlSyntax(), StrikethroughSyntax(), AutolinkExtensionSyntax()],
+    ),
+  );
+
+  /// The [magicMarkSet] extension.
+  static final ExtensionSet magicMarkSet = ExtensionSet(
+    List<BlockSyntax>.unmodifiable(
+      <BlockSyntax>[
+        const FencedCodeBlockSyntax(),
+        const TableSyntax(),
+        const UnorderedListWithCheckBoxSyntax(),
+        const OrderedListWithCheckBoxSyntax(),
+        const HeaderWithIdSyntax(),
+        const SetextHeaderWithIdSyntax(),
+      ],
+    ),
+    List<InlineSyntax>.unmodifiable(
       <InlineSyntax>[
         InlineHtmlSyntax(),
         StrikethroughSyntax(),
-        AutolinkExtensionSyntax()
+        AutolinkExtensionSyntax(),
+        EmojiSyntax(),
+        ColorSwatchSyntax(),
+        ColorSwatchSyntax(),
+        InteractiveSpanSyntax()
       ],
     ),
   );
