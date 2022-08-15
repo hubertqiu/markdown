@@ -17,9 +17,10 @@ class ImageSyntax extends LinkSyntax {
         );
 
   @override
-  Element createNode(
-    String destination,
-    String? title, {
+  Element createNode({
+    required String destination,
+    String? type,
+    String? title,
     required List<Node> Function() getChildren,
   }) {
     final element = Element.empty('img');
@@ -27,8 +28,10 @@ class ImageSyntax extends LinkSyntax {
     element.attributes['src'] = destination;
     element.attributes['alt'] = children.map((node) => node.textContent).join();
     if (title != null && title.isNotEmpty) {
-      element.attributes['title'] =
-          escapeAttribute(title.replaceAll('&', '&amp;'));
+      element.attributes['title'] = escapeAttribute(title.replaceAll('&', '&amp;'));
+    }
+    if (type != null && type.isNotEmpty) {
+      element.attributes['type'] = escapeAttribute(type);
     }
     return element;
   }

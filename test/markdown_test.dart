@@ -45,13 +45,10 @@ void main() async {
     'extensions/strikethrough.unit',
     inlineSyntaxes: [StrikethroughSyntax()],
   );
-  testFile(
-    'extensions/interactive_span.unit',
-    blockSyntaxes: [const FencedBlockquoteSyntax()],
-  );
 
   await testDirectory('common_mark');
   await testDirectory('gfm', extensionSet: ExtensionSet.gitHubFlavored);
+  await testDirectory('magic_mark', extensionSet: ExtensionSet.magicMarkSet);
 
   group('Corner cases', () {
     validateCore('Incorrect Links', '''
