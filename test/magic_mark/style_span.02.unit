@@ -1,0 +1,288 @@
+>>> Style Spans - 43
+#[foo][bar]
+
+[bar]: /url "title"
+<<<
+<p><span href="/url" title="title">foo</span></p>
+>>> Style Spans - 44
+#[link #[foo #[bar]]][ref]
+
+[ref]: /uri
+<<<
+<p>#[link #[foo <span>bar</span>]]<a href="/uri">ref</a></p>
+>>> Style Spans - 45
+#[link \#[bar][ref]
+
+[ref]: /uri
+<<<
+<p>#[link #<a href="/uri">bar</a></p>
+>>> Style Spans - 46
+#[link *foo **bar** `#`*][ref]
+
+[ref]: /uri
+<<<
+<p><span href="/uri">link <em>foo <strong>bar</strong> <code>#</code></em></span></p>
+>>> Style Spans - 47
+#[![moon](moon.jpg)][ref]
+
+[ref]: /uri
+<<<
+<p><span href="/uri"><img src="moon.jpg" alt="moon" /></span></p>
+>>> Style Spans - 48
+#[foo #[bar](/uri)]#[ref]
+
+[ref]: /uri
+<<<
+<p>#[foo <span href="/uri">bar</span>]<span href="/uri">ref</span></p>
+>>> Style Spans - 49
+#[foo *bar #[baz][ref]*][ref]
+
+[ref]: /uri
+<<<
+<p>#[foo <em>bar <span href="/uri">baz</span></em>]<a href="/uri">ref</a></p>
+>>> Style Spans - 50
+*#[foo*][ref]
+
+[ref]: /uri
+<<<
+<p>*<span href="/uri">foo*</span></p>
+>>> Style Spans - 51
+#[foo *bar][ref]
+
+[ref]: /uri
+<<<
+<p><span href="/uri">foo *bar</span></p>
+>>> Style Spans - 52
+[foo <bar attr="][ref]">
+
+[ref]: /uri
+<<<
+<p>[foo <bar attr="][ref]"></p>
+>>> Style Spans - 53
+[foo`][ref]`
+
+[ref]: /uri
+<<<
+<p>[foo<code>][ref]</code></p>
+>>> Style Spans (Reviewing Required) - 54
+[foo<http://example.com/?search=][ref]>
+
+[ref]: /uri
+<<<
+<p>[foo<a href="http://example.com/?search=%5D%5Bref%5D">http://example.com/?search=][ref]</a></p>
+>>> Style Spans - 55
+#[foo][BaR]
+
+[bar]: /url "title"
+<<<
+<p><span href="/url" title="title">foo</span></p>
+>>> Style Spans - 56
+#[Толпой][Толпой] is a Russian word.
+
+[ТОЛПОЙ]: /url
+<<<
+<p><span href="/url">Толпой</span> is a Russian word.</p>
+>>> Style Spans - 57
+[Foo
+  bar]: /url
+
+#[Baz][Foo bar]
+<<<
+<p><span href="/url">Baz</span></p>
+>>> Style Spans - 58
+#[foo] #[bar]
+
+[bar]: /url "title"
+<<<
+<p><span>foo</span> <span href="/url" title="title">bar</span></p>
+>>> Style Spans - 59
+[foo]
+#[bar]
+
+[bar]: /url "title"
+<<<
+<p>[foo]
+<span href="/url" title="title">bar</span></p>
+>>> Style Spans - 60
+[foo]: /url1
+
+[foo]: /url2
+
+#[bar][foo]
+<<<
+<p><span href="/url1">bar</span></p>
+>>> Style Spans - 61
+#[bar][foo\!]
+
+[foo!]: /url
+<<<
+<p><span>bar</span></p>
+>>> Style Spans - 62
+#[foo][ref[]
+
+[ref[]: /uri
+<<<
+<p>#[foo][ref[]</p>
+>>> Style Spans - 63
+#[foo][ref[bar]]
+
+[ref[bar]]: /uri
+<<<
+<p>#[foo][ref[bar]]</p>
+<p>[ref[bar]]: /uri</p>
+>>> Style Spans - 64
+[[[foo]]]
+
+[[[foo]]]: /url
+<<<
+<p>[[[foo]]]</p>
+<p>[[[foo]]]: /url</p>
+>>> Style Spans - 65
+#[foo][ref\[]
+
+[ref\[]: /uri
+<<<
+<p><span href="/uri">foo</span></p>
+>>> Style Spans - 66
+[bar\\]: /uri
+
+#[bar\\]
+<<<
+<p><span href="/uri">bar\</span></p>
+>>> Style Spans - 67
+[]
+
+[]: /uri
+<<<
+<p>[]</p>
+<p>[]: /uri</p>
+>>> Style Spans - 68
+[
+ ]
+
+[
+ ]: /uri
+<<<
+<p>[
+]</p>
+<p>[
+]: /uri</p>
+>>> Style Spans - 69
+#[foo][]
+
+[foo]: /url "title"
+<<<
+<p><span href="/url" title="title">foo</span></p>
+>>> Style Spans - 70
+#[*foo* bar][]
+
+[*foo* bar]: /url "title"
+<<<
+<p><span href="/url" title="title"><em>foo</em> bar</span></p>
+>>> Style Spans - 71
+#[Foo][]
+
+[foo]: /url "title"
+<<<
+<p><span href="/url" title="title">Foo</span></p>
+>>> Style Spans - 72
+#[foo] 
+[]
+
+[foo]: /url "title"
+<<<
+<p><span href="/url" title="title">foo</span> 
+[]</p>
+>>> Style Spans - 73
+#[foo]
+
+[foo]: /url "title"
+<<<
+<p><span href="/url" title="title">foo</span></p>
+>>> Style Spans - 74
+#[*foo* bar]
+
+[*foo* bar]: /url "title"
+<<<
+<p><span href="/url" title="title"><em>foo</em> bar</span></p>
+>>> Style Spans - 75
+#[#[*foo* bar]]
+
+[*foo* bar]: /url "title"
+<<<
+<p>#[<span href="/url" title="title"><em>foo</em> bar</span>]</p>
+>>> Style Spans - 76
+#[#[bar #[foo]
+
+[foo]: /url
+<<<
+<p>#[#[bar <span href="/url">foo</span></p>
+>>> Style Spans - 77
+#[Foo]
+
+[foo]: /url "title"
+<<<
+<p><span href="/url" title="title">Foo</span></p>
+>>> Style Spans - 78
+#[foo] bar
+
+[foo]: /url
+<<<
+<p><span href="/url">foo</span> bar</p>
+>>> Style Spans - 79
+\#[foo]
+
+[foo]: /url "title"
+<<<
+<p>#<a href="/url" title="title">foo</a></p>
+>>> Style Spans - 80
+[foo*]: /url
+
+*#[foo*]
+<<<
+<p>*<span href="/url">foo*</span></p>
+>>> Style Spans - 81
+#[foo][bar]
+
+[foo]: /url1
+[bar]: /url2
+<<<
+<p><span href="/url2">foo</span></p>
+>>> Style Spans - 82
+#[foo][]
+
+[foo]: /url1
+<<<
+<p><span href="/url1">foo</span></p>
+>>> Style Spans - 83
+#[foo]()
+
+[foo]: /url1
+<<<
+<p><span>foo</span></p>
+>>> Style Spans - 84
+#[foo](not a link)
+
+[foo]: /url1
+<<<
+<p><span href="/url1">foo</span>(not a link)</p>
+>>> Style Spans - 85
+#[foo]#[bar][baz]
+
+[baz]: /url
+<<<
+<p><span>foo</span><span href="/url">bar</span></p>
+>>> Style Spans - 86
+#[foo][bar][baz]
+
+[baz]: /url1
+[bar]: /url2
+<<<
+<p><span href="/url2">foo</span><a href="/url1">baz</a></p>
+>>> Style Spans - 87
+#[foo]#[bar][baz]
+
+[baz]: /url1
+[foo]: /url2
+<<<
+<p><span href="/url2">foo</span><span href="/url1">bar</span></p>

@@ -2,25 +2,19 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import '../ast.dart';
+import 'package:markdown/src/inline_syntaxes/abstract_linkable_syntax.dart';
+
+import '../../markdown.dart';
 import '../charcode.dart';
-import '../document.dart';
-import '../inline_parser.dart';
 import '../util.dart';
-import 'abstract_linkable_syntax.dart';
-import 'delimiter_syntax.dart';
 
-/// Matches links like `[blah][label]` and `[blah](url)`.
-class LinkSyntax extends AbstractLinkableSyntax {
+/// Matches style span like `#[blah]` and `#[blah](url)`.
+class StyleSpanSyntax extends AbstractLinkableSyntax {
   static final _entirelyWhitespacePattern = RegExp(r'^\s*$');
-
-  final Resolver linkResolver;
-
-  LinkSyntax({
-    Resolver? linkResolver,
-    super.pattern = r'\[',
-    super.startCharacter = $lbracket,
-  }) : linkResolver = (linkResolver ?? ((String _, [String? __]) => null));
+  StyleSpanSyntax({
+    super.pattern = r'#\[',
+    super.startCharacter = $hash,
+  });
 
   @override
   Node? close(
@@ -37,7 +31,7 @@ class LinkSyntax extends AbstractLinkableSyntax {
     if (parser.pos + 1 >= parser.source.length) {
       // The `]` is at the end of the document, but this may still be a valid
       // shortcut reference link.
-      return _tryCreateReferenceLink(parser, text, getChildren: getChildren);
+      return _tryCreateSimpleStyleSpan(parser, text, getChildren: getChildren);
     }
 
     // Peek at the next character; don't advance, so as to avoid later stepping
@@ -48,11 +42,11 @@ class LinkSyntax extends AbstractLinkableSyntax {
       // Maybe an inline link, like `[text](destination)`.
       parser.advanceBy(1);
       final leftParenIndex = parser.pos;
-      final inlineLink = _parseInlineLink(parser);
-      if (inlineLink != null) {
-        return _tryCreateInlineLink(
+      final inlineStyleSpan = _parseInlineStyleSpan(parser);
+      if (inlineStyleSpan != null) {
+        return _tryCreateComplexStyleSpan(
           parser,
-          inlineLink,
+          inlineStyleSpan,
           getChildren: getChildren,
         );
       }
@@ -63,9 +57,8 @@ class LinkSyntax extends AbstractLinkableSyntax {
       // Reset the parser position.
       parser.pos = leftParenIndex;
       parser.advanceBy(-1);
-      return _tryCreateReferenceLink(parser, text, getChildren: getChildren);
+      return _tryCreateSimpleStyleSpan(parser, text, getChildren: getChildren);
     }
-
     if (char == $lbracket) {
       parser.advanceBy(1);
       // At this point, we've matched `[...][`. Maybe a *full* reference link,
@@ -74,103 +67,18 @@ class LinkSyntax extends AbstractLinkableSyntax {
         // That opening `[` is not actually part of the link. Maybe a
         // *shortcut* reference link (followed by a `[`).
         parser.advanceBy(1);
-        return _tryCreateReferenceLink(parser, text, getChildren: getChildren);
+        return _tryCreateSimpleStyleSpan(parser, text, getChildren: getChildren);
       }
       final label = _parseReferenceLinkLabel(parser);
       if (label != null) {
-        return _tryCreateReferenceLink(parser, label, getChildren: getChildren);
+        return _tryCreateSimpleStyleSpan(parser, label, getChildren: getChildren);
       }
       return null;
     }
 
-    // The link text (inside `[...]`) was not followed with a opening `(` nor
+    // The style span text (inside `[...]`) was not followed with a opening `(` nor
     // an opening `[`. Perhaps just a simple shortcut reference link (`[...]`).
-    return _tryCreateReferenceLink(parser, text, getChildren: getChildren);
-  }
-
-  /// Resolve a possible reference link.
-  ///
-  /// Uses [linkReferences], [linkResolver], and [createNode] to try to
-  /// resolve [label] into a [Node]. If [label] is defined in
-  /// [linkReferences] or can be resolved by [linkResolver], returns a [Node]
-  /// that links to the resolved URL.
-  ///
-  /// Otherwise, returns `null`.
-  ///
-  /// [label] does not need to be normalized.
-  Node? _resolveReferenceLink(
-    String label,
-    Map<String, LinkReference> linkReferences, {
-    required List<Node> Function() getChildren,
-  }) {
-    final linkReference = linkReferences[normalizeLinkLabel(label)];
-    if (linkReference != null) {
-      return createNode(
-        destination: linkReference.destination,
-        title: linkReference.title,
-        getChildren: getChildren,
-      );
-    } else {
-      // This link has no reference definition. But we allow users of the
-      // library to specify a custom resolver function ([linkResolver]) that
-      // may choose to handle this. Otherwise, it's just treated as plain
-      // text.
-
-      // Normally, label text does not get parsed as inline Markdown. However,
-      // for the benefit of the link resolver, we need to at least escape
-      // brackets, so that, e.g. a link resolver can receive `[\[\]]` as `[]`.
-      final resolved = linkResolver(label.replaceAll(r'\\', r'\').replaceAll(r'\[', '[').replaceAll(r'\]', ']'));
-      if (resolved != null) {
-        getChildren();
-      }
-      return resolved;
-    }
-  }
-
-  /// Create the node represented by a Markdown link.
-  @override
-  Node createNode({
-    required String destination,
-    String? type,
-    String? title,
-    required List<Node> Function() getChildren,
-  }) {
-    final children = getChildren();
-    final element = Element('a', children);
-    element.attributes['href'] = escapeAttribute(destination);
-    if (title != null && title.isNotEmpty) {
-      element.attributes['title'] = escapeAttribute(title);
-    }
-    if (type != null && type.isNotEmpty) {
-      element.attributes['type'] = escapeAttribute(type);
-    }
-    return element;
-  }
-
-  /// Tries to create a reference link node.
-  ///
-  /// Returns the link if it was successfully created, `null` otherwise.
-  Node? _tryCreateReferenceLink(
-    InlineParser parser,
-    String label, {
-    required List<Node> Function() getChildren,
-  }) {
-    return _resolveReferenceLink(
-      label,
-      parser.document.linkReferences,
-      getChildren: getChildren,
-    );
-  }
-
-  // Tries to create an inline link node.
-  //
-  /// Returns the link if it was successfully created, `null` otherwise.
-  Node _tryCreateInlineLink(
-    InlineParser parser,
-    InlineLink link, {
-    required List<Node> Function() getChildren,
-  }) {
-    return createNode(destination: link.destination, title: link.title, getChildren: getChildren);
+    return _tryCreateSimpleStyleSpan(parser, text, getChildren: getChildren);
   }
 
   /// Parse a reference link label at the current position.
@@ -214,7 +122,86 @@ class LinkSyntax extends AbstractLinkableSyntax {
     return label;
   }
 
-  /// Parse an inline [InlineLink] at the current position.
+  /// Resolve a possible simple style span.
+  ///
+  /// Uses [linkReferences], [linkResolver], and [createNode] to try to
+  /// resolve [label] into a [Node]. If [label] is defined in
+  /// [linkReferences] or can be resolved by [linkResolver], returns a [Node]
+  /// that links to the resolved URL.
+  ///
+  /// Otherwise, returns `null`.
+  ///
+  /// [label] does not need to be normalized.
+  Node? _resolveSimpleStyleSpan(
+    String label,
+    Map<String, LinkReference> linkReferences, {
+    required List<Node> Function() getChildren,
+  }) {
+    final linkReference = linkReferences[normalizeLinkLabel(label)];
+    if (linkReference != null) {
+      return createNode(
+        destination: linkReference.destination,
+        title: linkReference.title,
+        getChildren: getChildren,
+      );
+    }
+    return createNode(
+      destination: null,
+      type: null,
+      title: null,
+      getChildren: getChildren,
+    );
+  }
+
+  /// Create the node represented by a Markdown link.
+  @override
+  Node createNode({
+    String? destination,
+    String? type,
+    String? title,
+    required List<Node> Function() getChildren,
+  }) {
+    final children = getChildren();
+    final element = Element('span', children);
+    if (destination != null && destination.isNotEmpty) {
+      element.attributes['href'] = escapeAttribute(destination);
+    }
+    if (title != null && title.isNotEmpty) {
+      element.attributes['title'] = escapeAttribute(title);
+    }
+    if (type != null && type.isNotEmpty) {
+      element.attributes['type'] = escapeAttribute(type);
+    }
+    return element;
+  }
+
+  /// Tries to create a reference link node.
+  ///
+  /// Returns the link if it was successfully created, `null` otherwise.
+  Node? _tryCreateSimpleStyleSpan(
+    InlineParser parser,
+    String label, {
+    required List<Node> Function() getChildren,
+  }) {
+    return _resolveSimpleStyleSpan(
+      label,
+      parser.document.linkReferences,
+      getChildren: getChildren,
+    );
+  }
+
+  // Tries to create an inline link node.
+  //
+  /// Returns the link if it was successfully created, `null` otherwise.
+  Node _tryCreateComplexStyleSpan(
+    InlineParser parser,
+    StyleSpan styleSpan, {
+    required List<Node> Function() getChildren,
+  }) {
+    return createNode(destination: styleSpan.destination, title: styleSpan.title, getChildren: getChildren);
+  }
+
+  /// Parse an inline [StyleSpan] at the current position.
   ///
   /// At this point, we have parsed a link's (or image's) opening `[`, and then
   /// a matching closing `]`, and [parser.pos] is pointing at an opening `(`.
@@ -223,8 +210,8 @@ class LinkSyntax extends AbstractLinkableSyntax {
   /// `(http://url)`, or a link destination with a title, such as
   /// `(http://url "title")`.
   ///
-  /// Returns the [InlineLink] if one was parsed, or `null` if not.
-  InlineLink? _parseInlineLink(InlineParser parser) {
+  /// Returns the [StyleSpan] if one was parsed, or `null` if not.
+  StyleSpan? _parseInlineStyleSpan(InlineParser parser) {
     // Start walking to the character just after the opening `(`.
     parser.advanceBy(1);
 
@@ -233,9 +220,9 @@ class LinkSyntax extends AbstractLinkableSyntax {
 
     if (parser.charAt(parser.pos) == $lt) {
       // Maybe a `<...>`-enclosed link destination.
-      return _parseInlineBracketedLink(parser);
+      return _parseInlineBracketedStyleSpan(parser);
     } else {
-      return _parseInlineBareDestinationLink(parser);
+      return _parseInlineBareDestinationStyleSpan(parser);
     }
   }
 
@@ -244,7 +231,7 @@ class LinkSyntax extends AbstractLinkableSyntax {
   /// character of the destination.
   ///
   /// Returns the link if it was successfully created, `null` otherwise.
-  InlineLink? _parseInlineBracketedLink(InlineParser parser) {
+  StyleSpan? _parseInlineBracketedStyleSpan(InlineParser parser) {
     parser.advanceBy(1);
 
     final buffer = StringBuffer();
@@ -283,9 +270,9 @@ class LinkSyntax extends AbstractLinkableSyntax {
         // followed by mystery characters; no longer a link.
         return null;
       }
-      return InlineLink(destination, title: title);
+      return StyleSpan(destination, title: title);
     } else if (char == $rparen) {
-      return InlineLink(destination);
+      return StyleSpan(destination);
     } else {
       // We parsed something like `[foo](<url>X`. Not a link.
       return null;
@@ -297,7 +284,7 @@ class LinkSyntax extends AbstractLinkableSyntax {
   /// character of the destination.
   ///
   /// Returns the link if it was successfully created, `null` otherwise.
-  InlineLink? _parseInlineBareDestinationLink(InlineParser parser) {
+  StyleSpan? _parseInlineBareDestinationStyleSpan(InlineParser parser) {
     // According to
     // [CommonMark](http://spec.commonmark.org/0.28/#link-destination):
     //
@@ -343,7 +330,7 @@ class LinkSyntax extends AbstractLinkableSyntax {
           // parentheses).
           parenCount--;
           if (parenCount == 0) {
-            return InlineLink(destination, title: title);
+            return StyleSpan(destination, title: title);
           }
           break;
 
@@ -356,7 +343,7 @@ class LinkSyntax extends AbstractLinkableSyntax {
           parenCount--;
           if (parenCount == 0) {
             final destination = buffer.toString();
-            return InlineLink(destination);
+            return StyleSpan(destination);
           }
           buffer.writeCharCode(char);
           break;
@@ -429,9 +416,10 @@ class LinkSyntax extends AbstractLinkableSyntax {
   }
 }
 
-class InlineLink {
+class StyleSpan {
   final String destination;
   final String? title;
+  final String? type;
 
-  InlineLink(this.destination, {this.title});
+  StyleSpan(this.destination, {this.title, this.type});
 }

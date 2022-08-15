@@ -42,8 +42,8 @@ class Document {
     this.encodeHtml = true,
     this.withDefaultBlockSyntaxes = true,
     this.withDefaultInlineSyntaxes = true,
-  }) : hasCustomInlineSyntaxes = (inlineSyntaxes?.isNotEmpty ?? false) ||
-            (extensionSet?.inlineSyntaxes.isNotEmpty ?? false) {
+  }) : hasCustomInlineSyntaxes =
+            (inlineSyntaxes?.isNotEmpty ?? false) || (extensionSet?.inlineSyntaxes.isNotEmpty ?? false) {
     _blockSyntaxes.addAll(blockSyntaxes ?? []);
     _inlineSyntaxes.addAll(inlineSyntaxes ?? []);
 

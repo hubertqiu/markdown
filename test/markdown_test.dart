@@ -48,6 +48,7 @@ void main() async {
 
   await testDirectory('common_mark');
   await testDirectory('gfm', extensionSet: ExtensionSet.gitHubFlavored);
+  await testDirectory('magic_mark', extensionSet: ExtensionSet.magicMarkSet);
 
   group('Corner cases', () {
     validateCore('Incorrect Links', '''
@@ -71,8 +72,7 @@ void main() async {
   });
 
   group('Resolver', () {
-    Node? nyanResolver(String text, [_]) =>
-        text.isEmpty ? null : Text('~=[,,_${text}_,,]:3');
+    Node? nyanResolver(String text, [_]) => text.isEmpty ? null : Text('~=[,,_${text}_,,]:3');
     validateCore(
         'simple link resolver',
         '''
