@@ -4,16 +4,13 @@
 
 import 'package:markdown/src/inline_syntaxes/abstract_linkable_syntax.dart';
 
-import '../ast.dart';
+import '../../markdown.dart';
 import '../charcode.dart';
-import '../inline_parser.dart';
 import '../util.dart';
-import 'delimiter_syntax.dart';
 
 /// Matches style span like `#[blah]` and `#[blah](url)`.
 class StyleSpanSyntax extends AbstractLinkableSyntax {
   static final _entirelyWhitespacePattern = RegExp(r'^\s*$');
-
   StyleSpanSyntax({
     super.pattern = r'#\[',
     super.startCharacter = $hash,
@@ -62,7 +59,6 @@ class StyleSpanSyntax extends AbstractLinkableSyntax {
       parser.advanceBy(-1);
       return _tryCreateSimpleStyleSpan(parser, text, getChildren: getChildren);
     }
-
     if (char == $lbracket) {
       parser.advanceBy(1);
       // At this point, we've matched `[...][`. Maybe a *full* reference link,
@@ -73,7 +69,7 @@ class StyleSpanSyntax extends AbstractLinkableSyntax {
         parser.advanceBy(1);
         return _tryCreateSimpleStyleSpan(parser, text, getChildren: getChildren);
       }
-      final label = _parseStyleSpanLabel(parser);
+      final label = _parseReferenceLinkLabel(parser);
       if (label != null) {
         return _tryCreateSimpleStyleSpan(parser, label, getChildren: getChildren);
       }
@@ -85,80 +81,13 @@ class StyleSpanSyntax extends AbstractLinkableSyntax {
     return _tryCreateSimpleStyleSpan(parser, text, getChildren: getChildren);
   }
 
-  /// Resolve a possible simple style span.
-  ///
-  /// Uses [linkReferences], [linkResolver], and [createNode] to try to
-  /// resolve [label] into a [Node]. If [label] is defined in
-  /// [linkReferences] or can be resolved by [linkResolver], returns a [Node]
-  /// that links to the resolved URL.
-  ///
-  /// Otherwise, returns `null`.
-  ///
-  /// [label] does not need to be normalized.
-  Node? _resolveSimpleStyleSpan(
-    String label, {
-    required List<Node> Function() getChildren,
-  }) {
-    return createNode(
-      destination: label,
-      type: null,
-      title: label,
-      getChildren: getChildren,
-    );
-  }
-
-  /// Create the node represented by a Markdown link.
-  @override
-  Node createNode({
-    required String destination,
-    String? type,
-    String? title,
-    required List<Node> Function() getChildren,
-  }) {
-    final children = getChildren();
-    final element = Element('span', children);
-    element.attributes['href'] = escapeAttribute(destination);
-    if (title != null && title.isNotEmpty) {
-      element.attributes['title'] = escapeAttribute(title);
-    }
-    if (type != null && type.isNotEmpty) {
-      element.attributes['type'] = escapeAttribute(type);
-    }
-    return element;
-  }
-
-  /// Tries to create a reference link node.
-  ///
-  /// Returns the link if it was successfully created, `null` otherwise.
-  Node? _tryCreateSimpleStyleSpan(
-    InlineParser parser,
-    String label, {
-    required List<Node> Function() getChildren,
-  }) {
-    return _resolveSimpleStyleSpan(
-      label,
-      getChildren: getChildren,
-    );
-  }
-
-  // Tries to create an inline link node.
-  //
-  /// Returns the link if it was successfully created, `null` otherwise.
-  Node _tryCreateComplexStyleSpan(
-    InlineParser parser,
-    StyleSpan styleSpan, {
-    required List<Node> Function() getChildren,
-  }) {
-    return createNode(destination: styleSpan.destination, title: styleSpan.title, getChildren: getChildren);
-  }
-
   /// Parse a reference link label at the current position.
   ///
   /// Specifically, [parser.pos] is expected to be pointing at the `[` which
   /// opens the link label.
   ///
   /// Returns the label if it could be parsed, or `null` if not.
-  String? _parseStyleSpanLabel(InlineParser parser) {
+  String? _parseReferenceLinkLabel(InlineParser parser) {
     // Walk past the opening `[`.
     parser.advanceBy(1);
     if (parser.isDone) return null;
@@ -191,6 +120,85 @@ class StyleSpanSyntax extends AbstractLinkableSyntax {
     if (_entirelyWhitespacePattern.hasMatch(label)) return null;
 
     return label;
+  }
+
+  /// Resolve a possible simple style span.
+  ///
+  /// Uses [linkReferences], [linkResolver], and [createNode] to try to
+  /// resolve [label] into a [Node]. If [label] is defined in
+  /// [linkReferences] or can be resolved by [linkResolver], returns a [Node]
+  /// that links to the resolved URL.
+  ///
+  /// Otherwise, returns `null`.
+  ///
+  /// [label] does not need to be normalized.
+  Node? _resolveSimpleStyleSpan(
+    String label,
+    Map<String, LinkReference> linkReferences, {
+    required List<Node> Function() getChildren,
+  }) {
+    final linkReference = linkReferences[normalizeLinkLabel(label)];
+    if (linkReference != null) {
+      return createNode(
+        destination: linkReference.destination,
+        title: linkReference.title,
+        getChildren: getChildren,
+      );
+    }
+    return createNode(
+      destination: null,
+      type: null,
+      title: null,
+      getChildren: getChildren,
+    );
+  }
+
+  /// Create the node represented by a Markdown link.
+  @override
+  Node createNode({
+    String? destination,
+    String? type,
+    String? title,
+    required List<Node> Function() getChildren,
+  }) {
+    final children = getChildren();
+    final element = Element('span', children);
+    if (destination != null && destination.isNotEmpty) {
+      element.attributes['href'] = escapeAttribute(destination);
+    }
+    if (title != null && title.isNotEmpty) {
+      element.attributes['title'] = escapeAttribute(title);
+    }
+    if (type != null && type.isNotEmpty) {
+      element.attributes['type'] = escapeAttribute(type);
+    }
+    return element;
+  }
+
+  /// Tries to create a reference link node.
+  ///
+  /// Returns the link if it was successfully created, `null` otherwise.
+  Node? _tryCreateSimpleStyleSpan(
+    InlineParser parser,
+    String label, {
+    required List<Node> Function() getChildren,
+  }) {
+    return _resolveSimpleStyleSpan(
+      label,
+      parser.document.linkReferences,
+      getChildren: getChildren,
+    );
+  }
+
+  // Tries to create an inline link node.
+  //
+  /// Returns the link if it was successfully created, `null` otherwise.
+  Node _tryCreateComplexStyleSpan(
+    InlineParser parser,
+    StyleSpan styleSpan, {
+    required List<Node> Function() getChildren,
+  }) {
+    return createNode(destination: styleSpan.destination, title: styleSpan.title, getChildren: getChildren);
   }
 
   /// Parse an inline [StyleSpan] at the current position.

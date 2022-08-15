@@ -9,13 +9,13 @@
 
 [ref]: /uri
 <<<
-<p><span href="/uri">link #[foo #[bar]]</span></p>
+<p>#[link #[foo <span>bar</span>]]<a href="/uri">ref</a></p>
 >>> Style Spans - 45
 #[link \#[bar][ref]
 
 [ref]: /uri
 <<<
-<p><span href="/uri">link #[bar</span></p>
+<p>#[link #<a href="/uri">bar</a></p>
 >>> Style Spans - 46
 #[link *foo **bar** `#`*][ref]
 
@@ -39,15 +39,15 @@
 
 [ref]: /uri
 <<<
-<p>[foo <em>bar <span href="/uri">baz</span></em>]<span href="/uri">ref</span></p>
+<p>#[foo <em>bar <span href="/uri">baz</span></em>]<a href="/uri">ref</a></p>
 >>> Style Spans - 50
-*[foo*][ref]
+*#[foo*][ref]
 
 [ref]: /uri
 <<<
 <p>*<span href="/uri">foo*</span></p>
 >>> Style Spans - 51
-[foo *bar][ref]
+#[foo *bar][ref]
 
 [ref]: /uri
 <<<
@@ -64,20 +64,20 @@
 [ref]: /uri
 <<<
 <p>[foo<code>][ref]</code></p>
->>> Style Spans - 54
+>>> Style Spans (Reviewing Required) - 54
 [foo<http://example.com/?search=][ref]>
 
 [ref]: /uri
 <<<
-<p>[foo<span href="http://example.com/?search=%5D%5Bref%5D">http://example.com/?search=][ref]</span></p>
+<p>[foo<a href="http://example.com/?search=%5D%5Bref%5D">http://example.com/?search=][ref]</a></p>
 >>> Style Spans - 55
-[foo][BaR]
+#[foo][BaR]
 
 [bar]: /url "title"
 <<<
 <p><span href="/url" title="title">foo</span></p>
 >>> Style Spans - 56
-[Толпой][Толпой] is a Russian word.
+#[Толпой][Толпой] is a Russian word.
 
 [ТОЛПОЙ]: /url
 <<<
@@ -86,18 +86,18 @@
 [Foo
   bar]: /url
 
-[Baz][Foo bar]
+#[Baz][Foo bar]
 <<<
 <p><span href="/url">Baz</span></p>
 >>> Style Spans - 58
-[foo] [bar]
+#[foo] #[bar]
 
 [bar]: /url "title"
 <<<
-<p>[foo] <span href="/url" title="title">bar</span></p>
+<p><span>foo</span> <span href="/url" title="title">bar</span></p>
 >>> Style Spans - 59
 [foo]
-[bar]
+#[bar]
 
 [bar]: /url "title"
 <<<
@@ -108,27 +108,27 @@
 
 [foo]: /url2
 
-[bar][foo]
+#[bar][foo]
 <<<
 <p><span href="/url1">bar</span></p>
 >>> Style Spans - 61
-[bar][foo\!]
+#[bar][foo\!]
 
 [foo!]: /url
 <<<
-<p>[bar][foo!]</p>
+<p><span>bar</span></p>
 >>> Style Spans - 62
-[foo][ref[]
+#[foo][ref[]
 
 [ref[]: /uri
 <<<
-<p>[foo][ref[]</p>
+<p>#[foo][ref[]</p>
 >>> Style Spans - 63
-[foo][ref[bar]]
+#[foo][ref[bar]]
 
 [ref[bar]]: /uri
 <<<
-<p>[foo][ref[bar]]</p>
+<p>#[foo][ref[bar]]</p>
 <p>[ref[bar]]: /uri</p>
 >>> Style Spans - 64
 [[[foo]]]
@@ -138,7 +138,7 @@
 <p>[[[foo]]]</p>
 <p>[[[foo]]]: /url</p>
 >>> Style Spans - 65
-[foo][ref\[]
+#[foo][ref\[]
 
 [ref\[]: /uri
 <<<
@@ -146,7 +146,7 @@
 >>> Style Spans - 66
 [bar\\]: /uri
 
-[bar\\]
+#[bar\\]
 <<<
 <p><span href="/uri">bar\</span></p>
 >>> Style Spans - 67
@@ -168,25 +168,25 @@
 <p>[
 ]: /uri</p>
 >>> Style Spans - 69
-[foo][]
+#[foo][]
 
 [foo]: /url "title"
 <<<
 <p><span href="/url" title="title">foo</span></p>
->>> Style Spans - 79
-[*foo* bar][]
+>>> Style Spans - 70
+#[*foo* bar][]
 
 [*foo* bar]: /url "title"
 <<<
 <p><span href="/url" title="title"><em>foo</em> bar</span></p>
 >>> Style Spans - 71
-[Foo][]
+#[Foo][]
 
 [foo]: /url "title"
 <<<
 <p><span href="/url" title="title">Foo</span></p>
 >>> Style Spans - 72
-[foo] 
+#[foo] 
 []
 
 [foo]: /url "title"
@@ -194,95 +194,95 @@
 <p><span href="/url" title="title">foo</span> 
 []</p>
 >>> Style Spans - 73
-[foo]
+#[foo]
 
 [foo]: /url "title"
 <<<
 <p><span href="/url" title="title">foo</span></p>
 >>> Style Spans - 74
-[*foo* bar]
+#[*foo* bar]
 
 [*foo* bar]: /url "title"
 <<<
 <p><span href="/url" title="title"><em>foo</em> bar</span></p>
 >>> Style Spans - 75
-[[*foo* bar]]
+#[#[*foo* bar]]
 
 [*foo* bar]: /url "title"
 <<<
-<p>[<span href="/url" title="title"><em>foo</em> bar</span>]</p>
+<p>#[<span href="/url" title="title"><em>foo</em> bar</span>]</p>
 >>> Style Spans - 76
-[[bar [foo]
+#[#[bar #[foo]
 
 [foo]: /url
 <<<
-<p>[[bar <span href="/url">foo</span></p>
+<p>#[#[bar <span href="/url">foo</span></p>
 >>> Style Spans - 77
-[Foo]
+#[Foo]
 
 [foo]: /url "title"
 <<<
 <p><span href="/url" title="title">Foo</span></p>
 >>> Style Spans - 78
-[foo] bar
+#[foo] bar
 
 [foo]: /url
 <<<
 <p><span href="/url">foo</span> bar</p>
 >>> Style Spans - 79
-\[foo]
+\#[foo]
 
 [foo]: /url "title"
 <<<
-<p>[foo]</p>
+<p>#<a href="/url" title="title">foo</a></p>
 >>> Style Spans - 80
 [foo*]: /url
 
-*[foo*]
+*#[foo*]
 <<<
 <p>*<span href="/url">foo*</span></p>
 >>> Style Spans - 81
-[foo][bar]
+#[foo][bar]
 
 [foo]: /url1
 [bar]: /url2
 <<<
 <p><span href="/url2">foo</span></p>
 >>> Style Spans - 82
-[foo][]
+#[foo][]
 
 [foo]: /url1
 <<<
 <p><span href="/url1">foo</span></p>
 >>> Style Spans - 83
-[foo]()
+#[foo]()
 
 [foo]: /url1
 <<<
-<p><span href="">foo</span></p>
+<p><span>foo</span></p>
 >>> Style Spans - 84
-[foo](not a link)
+#[foo](not a link)
 
 [foo]: /url1
 <<<
 <p><span href="/url1">foo</span>(not a link)</p>
 >>> Style Spans - 85
-[foo][bar][baz]
+#[foo]#[bar][baz]
 
 [baz]: /url
 <<<
-<p>[foo]<span href="/url">bar</span></p>
+<p><span>foo</span><span href="/url">bar</span></p>
 >>> Style Spans - 86
-[foo][bar][baz]
+#[foo][bar][baz]
 
 [baz]: /url1
 [bar]: /url2
 <<<
-<p><span href="/url2">foo</span><span href="/url1">baz</span></p>
+<p><span href="/url2">foo</span><a href="/url1">baz</a></p>
 >>> Style Spans - 87
-[foo][bar][baz]
+#[foo]#[bar][baz]
 
 [baz]: /url1
 [foo]: /url2
 <<<
-<p>[foo]<span href="/url1">bar</span></p>
+<p><span href="/url2">foo</span><span href="/url1">bar</span></p>

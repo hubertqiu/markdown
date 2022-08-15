@@ -9,15 +9,15 @@
 >>> Style Spans - 3
 #[link]()
 <<<
-<p><span href="">link</span></p>
+<p><span>link</span></p>
 >>> Style Spans - 4
 #[link](<>)
 <<<
-<p><span href="">link</span></p>
+<p><span>link</span></p>
 >>> Style Spans - 5
 #[link](/my uri)
 <<<
-<p><span href="link" title="link">link</span>(/my uri)</p>
+<p><span>link</span>(/my uri)</p>
 >>> Style Spans - 6
 #[link](</my uri>)
 <<<
@@ -26,13 +26,13 @@
 #[link](foo
 bar)
 <<<
-<p><span href="link" title="link">link</span>(foo
+<p><span>link</span>(foo
 bar)</p>
 >>> Style Spans - 8
 #[link](<foo
 bar>)
 <<<
-<p><span href="link" title="link">link</span>(<foo
+<p><span>link</span>(<foo
 bar>)</p>
 >>> Style Spans - 9
 #[a](<b)c>)
@@ -41,15 +41,15 @@ bar>)</p>
 >>> Style Spans - 10
 #[link](<foo\>)
 <<<
-<p><span href="link" title="link">link</span>(&lt;foo&gt;)</p>
+<p><span>link</span>(&lt;foo&gt;)</p>
 >>> Style Spans - 11
 #[a](<b)c
 #[a](<b)c>
 #[a](<b>c)
 <<<
-<p><span href="a" title="a">a</span>(&lt;b)c
-<span href="a" title="a">a</span>(&lt;b)c&gt;
-<span href="a" title="a">a</span>(<b>c)</p>
+<p><span>a</span>(&lt;b)c
+<span>a</span>(&lt;b)c&gt;
+<span>a</span>(<b>c)</p>
 >>> Style Spans - 12
 #[link](\(foo\))
 <<<
@@ -111,7 +111,7 @@ bar>)</p>
 >>> Style Spans - 24
 #[link](/url "title "and" title")
 <<<
-<p><span href="link" title="link">link</span>(/url "title "and" title")</p>
+<p><span>link</span>(/url "title "and" title")</p>
 >>> Style Spans - 25
 #[link](/url 'title "and" title')
 <<<
@@ -124,15 +124,15 @@ bar>)</p>
 >>> Style Spans - 27
 #[link] (/uri)
 <<<
-<p><span href="link" title="link">link</span> (/uri)</p>
+<p><span>link</span> (/uri)</p>
 >>> Style Spans - 28
 #[link #[foo #[bar]]](/uri)
 <<<
-<p><span href="/uri">link #[foo #[bar]]</span></p>
+<p>#[link #[foo <span>bar</span>]](/uri)</p>
 >>> Style Spans - 29
 #[link] bar](/uri)
 <<<
-<p>#[link] bar](/uri)</p>
+<p><span>link</span> bar](/uri)</p>
 >>> Style Spans - 30
 #[link #[bar](/uri)
 <<<
@@ -140,7 +140,7 @@ bar>)</p>
 >>> Style Spans - 31
 #[link \#[bar](/uri)
 <<<
-<p><span href="/uri">link #[bar</span></p>
+<p>#[link #<a href="/uri">bar</a></p>
 >>> Style Spans - 32
 #[link *foo **bar** `#`*](/uri)
 <<<
@@ -160,9 +160,9 @@ bar>)</p>
 >>> Style Spans - 36
 !#[#[#[foo](uri1)](uri2)](uri3)
 <<<
-<p><img src="uri3" alt="#[foo](uri2)" /></p>
+<p>!#[#[<span href="uri1">foo</span>](uri2)](uri3)</p>
 >>> Style Spans - 37
-*[foo*](/uri)
+*#[foo*](/uri)
 <<<
 <p>*<span href="/uri">foo*</span></p>
 >>> Style Spans - 38
@@ -172,7 +172,7 @@ bar>)</p>
 >>> Style Spans - 39
 *foo #[bar* baz]
 <<<
-<p><em>foo #[bar</em> baz]</p>
+<p>*foo <span>bar* baz</span></p>
 >>> Style Spans - 40
 #[foo <bar attr="](baz)">
 <<<
@@ -181,8 +181,7 @@ bar>)</p>
 #[foo`](/uri)`
 <<<
 <p>#[foo<code>](/uri)</code></p>
->>> Style Spans - 42
+>>> Style Spans(Review Required) - 42
 #[foo<http://example.com/?search=](uri)>
 <<<
-<p>#[foo<span href="http://example.com/?search=%5D(uri)">http://example.com/?search=](uri)</span></p>
-
+<p>#[foo<a href="http://example.com/?search=%5D(uri)">http://example.com/?search=](uri)</a></p>

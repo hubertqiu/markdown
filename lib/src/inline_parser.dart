@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:markdown/src/inline_syntaxes/abstract_linkable_syntax.dart';
+import 'package:markdown/src/inline_syntaxes/style_span_syntax.dart';
 
 import 'ast.dart';
 import 'charcode.dart';
@@ -163,9 +164,17 @@ class InlineParser {
       });
       if (linkNode != null) {
         _delimiterStack.removeAt(index);
-        if (delimiter.char == $lbracket) {
-          for (final d in _delimiterStack.sublist(0, index)) {
-            if (d.char == $lbracket) d.isActive = false;
+        if (syntax is LinkSyntax) {
+          if (delimiter.char == $lbracket) {
+            for (final d in _delimiterStack.sublist(0, index)) {
+              if (d.char == $lbracket) d.isActive = false;
+            }
+          }
+        } else if (syntax is StyleSpanSyntax) {
+          if (delimiter.char == $hash) {
+            for (final d in _delimiterStack.sublist(0, index)) {
+              if (d.char == $hash) d.isActive = false;
+            }
           }
         }
         _tree[nodeIndex] = linkNode;
